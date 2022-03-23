@@ -25,18 +25,20 @@ public class EditorScripting : EditorWindow
         // OnGUI Method Contents
         GUILayout.Label("Base Settings", EditorStyles.boldLabel);
         custString = EditorGUILayout.TextField("Text Field", custString);
-
+        //Under group of options, checkbox for enabling these options
         groupEnabled = EditorGUILayout.BeginToggleGroup("Optional Settings", groupEnabled);
         optionalSettings = EditorGUILayout.Toggle("Double Jumping Enabled", optionalSettings);
         jumMod = EditorGUILayout.Slider("Jump Modifier", jumMod, -5, 5);
         impactMod = EditorGUILayout.Slider("Impact Modifier", impactMod, -5, 5);
         EditorGUILayout.EndToggleGroup();
+        //End of section
 
         GUI.backgroundColor = Color.red;
 
         GUILayout.FlexibleSpace();
         EditorGUILayout.BeginHorizontal();
         GUILayout.FlexibleSpace();
+        //Reset button, sets default values
         if (GUILayout.Button("Reset", GUILayout.Width(100), GUILayout.Height(30)))
         {
             custString = "String Here";
