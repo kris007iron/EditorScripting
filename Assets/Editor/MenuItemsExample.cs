@@ -88,24 +88,24 @@ public class MenuItemsExample
     {
         //Your code
     }
-    [MenuItem("NewMenu/Option1", false, 2)]
+    [MenuItem("NewMenu/Option2", false, 2)]
     private static void NewMenuOption2()
     {
         //Your code
     }
-    [MenuItem("NewMenu/Option1", false, 3)]
+    [MenuItem("NewMenu/Option3", false, 3)]
     private static void NewMenuOption3()
     {
         //Your code
     }
-    [MenuItem("NewMenu/Option1", false, 51)]
+    [MenuItem("NewMenu/Option4", false, 51)]
     private static void NewMenuOption4()
     {
         //Your code
     }
     //Simply way to get ref of rigidbody for further operations from right clicked obj with rigidbody after clicking new option
     //Also remember of extra argument
-    [MenuItem("CONTEXT/Rigidbody/New Option", true)]
+    [MenuItem("CONTEXT/Rigidbody/New Option")]
     private static void NewMenuOption(MenuCommand menuCommand)
     {
         // The RigidBody component can be extracted from the menu command using the context field.
