@@ -111,5 +111,8 @@ public class MenuItemsExample
         // The RigidBody component can be extracted from the menu command using the context field.
             var rigid = menuCommand.context as Rigidbody;
     }
+    //For these you need to derive from MonoBehaviour
+    //[ContextMenu("Reset Script")] by this you can create whole new Context menu for component, by using context you will only add new options to existing menu
+    //Also we have COntextMenuItem which requires two arguments name of field and name of method to invoke on click its used for your scripts
 }
 
