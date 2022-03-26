@@ -10,6 +10,9 @@ public class Projectile : MonoBehaviour
     //new will clear the warnings in console
     [HideInInspector] new public Rigidbody rigidbody;
 
+    //Radius of damage, will be used fo custom editor for projectile
+    public float damageRadius = 1f;
+
     //This usefull method is called when you attached script to an object for the first time
     void Reset()
     {
