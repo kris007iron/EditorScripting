@@ -1,3 +1,4 @@
+using System.Reflection.Emit;
 using UnityEngine;
 using UnityEditor;
 
@@ -72,8 +73,43 @@ public class MenuItemsExample
     [MenuItem("Assets/ProcessTexture", true)]
     private static bool NewMenuOptionValidation()
     {
-        return Selection.activeObject.GetType() == typeof(Texture3D);
+        //But also you need to check if anything is selected otherwise you will get an error (null reference)
+        if (Selection.activeObject != null)
+            return Selection.activeObject.GetType() == typeof(Texture3D);
+        else
+        {
+            return false;
+        }
 
     } // The condtition wont let function run if GO isn't the needed type}
+    //prioritizing things in menu by adding number you can create separation line by increments of 50
+    [MenuItem("NewMenu/Option1", false, 1)]
+    private static void NewMenuOption1()
+    {
+        //Your code
+    }
+    [MenuItem("NewMenu/Option1", false, 2)]
+    private static void NewMenuOption2()
+    {
+        //Your code
+    }
+    [MenuItem("NewMenu/Option1", false, 3)]
+    private static void NewMenuOption3()
+    {
+        //Your code
+    }
+    [MenuItem("NewMenu/Option1", false, 51)]
+    private static void NewMenuOption4()
+    {
+        //Your code
+    }
+    //Simply way to get ref of rigidbody for further operations from right clicked obj with rigidbody after clicking new option
+    //Also remember of extra argument
+    [MenuItem("CONTEXT/Rigidbody/New Option", true)]
+    private static void NewMenuOption(MenuCommand menuCommand)
+    {
+        // The RigidBody component can be extracted from the menu command using the context field.
+            var rigid = menuCommand.context as Rigidbody;
+    }
 }
 
