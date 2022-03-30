@@ -4,16 +4,56 @@ using UnityEngine;
 
 public class SplineComponent : MonoBehaviour, ISpline
 {
+    #region lazyIndexing
+
+    /// <summary>
+    /// Index is used to provide uniform point searching
+    /// </summary>
+    private SplineIndex uniformIndex;
+    SplineIndex Index
+    {
+        get
+        {
+            if (uniformIndex == null) uniformIndex = new SplineIndex(this);
+            return uniformIndex;
+        }
+    }
+
+    public void ResetIndex()
+    {
+        uniformIndex = null;
+        length = null;
+    }
+
+    #endregion
+    //Some variables to store the data
+    public bool closed = false;
+    public List<Vector3> points = new List<Vector3>();
+    // Question mark checks if variable is not null cuz float is nullable
+    public float? length;
+
+    #region InterfaceImplement
+
     //We need to implement basic interface function but without making any action
     public Vector3 GetNonUniformPoint(float t)
     {
-        throw new System.NotImplementedException();
+        //Based on amount of points function will do different things 
+        switch (points.Count)
+        {
+            case 0:
+                return Vector3.zero;
+            case 1:
+                return transform.TransformPoint(points[0]);
+            case 2:
+                return transform.TransformPoint(Vector3.Lerp(points[0], points[1], t));//Lerp is used for linear interpolation
+            case 3:
+                return transform.TransformPoint(points[1]);
+            default:
+                return Hermite(t);
+        }
     }
 
-    public Vector3 GetPoint(float t)
-    {
-        throw new System.NotImplementedException();
-    }
+    public Vector3 GetPoint(float t) => Index.GetPoint(t);
 
     public Vector3 GetLeft(float t)
     {
@@ -52,22 +92,28 @@ public class SplineComponent : MonoBehaviour, ISpline
 
     public Vector3 GetControlPoint(int index)
     {
-        throw new System.NotImplementedException();
+        return points[index];
     }
 
     public void SetControlPoint(int index, Vector3 position)
     {
-        throw new System.NotImplementedException();
+        ResetIndex();
+        points[index] = position;
     }
 
     public void InsertControlPoint(int index, Vector3 position)
     {
-        throw new System.NotImplementedException();
+        ResetIndex();
+        if (index >= points.Count)
+            points.Add(position);
+        else
+            points.Insert(index, position);
     }
 
     public void RemoveControlPoint(int index)
     {
-        throw new System.NotImplementedException();
+        ResetIndex();
+        points.RemoveAt(index);
     }
 
     public Vector3 GetDistance(float dsitance)
@@ -80,7 +126,11 @@ public class SplineComponent : MonoBehaviour, ISpline
         throw new System.NotImplementedException();
     }
 
-    public int ControlPointCount => throw new System.NotImplementedException();
+
+    #endregion
+
+    //Shorter version of simple return method
+    public int ControlPointCount => points.Count;
 
     //We use interpolation to count estimated position of line based on actual data of points
     internal static Vector3 Interpolate(Vector3 a, Vector3 b, Vector3 c,Vector3 d, float u)
@@ -94,5 +144,23 @@ public class SplineComponent : MonoBehaviour, ISpline
                    (-a + c) *
                    u + 2f * b
                ));
+    }
+
+    //Return interpolated world position of control points
+    private Vector3 Hermite(float t)
+    {
+        var count = points.Count - (closed ? 0 : 3);
+        var i = Mathf.Min(Mathf.FloorToInt(t * (float)count), count - 1);
+        var u = t * (float)count - (float)i;
+        var a = GetPointByIndex(i);
+        var b = GetPointByIndex(i + 1);
+        var c = GetPointByIndex(i + 2);
+        var d = GetPointByIndex(i + 3);
+        return transform.TransformPoint((Interpolate(a, b, c, d, u)));
+    }
+    Vector3 GetPointByIndex(int i)
+    {
+        if (i < 0) i += points.Count;
+        return points[i % points.Count];
     }
 }
