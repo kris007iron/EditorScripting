@@ -154,6 +154,27 @@ public class SplineComponent : MonoBehaviour, ISpline
 
     #endregion
 
+    #region EditorHelperMethods
+    //We need to add 4 default points due to requirements of spline
+    private void Reset()
+    {
+        points = new List<Vector3>()
+        {
+            Vector3.forward * 3,
+            Vector3.forward * 6,
+            Vector3.forward * 9,
+            Vector3.forward * 12
+        };
+    }
+
+
+    //THis function is called when value on the component have been changed
+    private void OnValidate()
+    {
+        if (uniformIndex != null) uniformIndex.ReIndex();
+    }
+    #endregion
+
     //Shorter version of simple return method
     public int ControlPointCount => points.Count;
 
