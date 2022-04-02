@@ -23,7 +23,7 @@ public class SplineIndex : MonoBehaviour
     public void ReIndex()
     {
         var searchStepSize = 0.00001f;
-        var lentgth = spline.GetLenght(searchStepSize);
+        var lentgth = spline.GetLength(searchStepSize);
         var indexSize = Mathf.FloorToInt(lentgth * 2);
         var _linearPoints = new List<Vector3>(indexSize);
         var t = 0f;
