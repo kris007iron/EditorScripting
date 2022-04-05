@@ -32,4 +32,34 @@ public class SplineComponentEditor : Editor
         }
         GUILayout.EndHorizontal();
     }
+    //For each state selected or not we have different types of gizmos low or high resolutions
+    [DrawGizmo(GizmoType.NonSelected)]
+    static void DrawGizmosLoRes(SplineComponent spline, GizmoType gizmoType)
+    {
+        Gizmos.color = Color.white;
+        DrawGizmo(spline, 64);
+    }
+
+    [DrawGizmo(GizmoType.Selected)]
+    static void DrawGizmosHiRes(SplineComponent spline, GizmoType gizmoType)
+    {
+        Gizmos.color = Color.white;
+        DrawGizmo(spline, 1024);
+    }
+    static void DrawGizmo(SplineComponent spline, int stepCount)
+    {
+        if(spline.points.Count > 0)
+        {
+            var P = 0f;
+            var start = spline.GetNonUniformPoint(0);
+            var step = 1f / stepCount;
+            do
+            {
+                P += step;
+                var here = spline.GetNonUniformPoint(P);
+                Gizmos.DrawLine(start, here);
+                start = here;
+            } while (P + step <= 1);
+        }
+    }
 }
