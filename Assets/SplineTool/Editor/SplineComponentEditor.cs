@@ -6,6 +6,77 @@ using UnityEditor;
 [CustomEditor(typeof(SplineComponent))]
 public class SplineComponentEditor : Editor
 {
+    int hotIndex = -1;
+    int removeIndex = -1;
+
+    private void OnSceneGUI()
+    {
+        var spline = target as SplineComponent;
+
+
+        var e = Event.current;
+        GUIUtility.GetControlID(FocusType.Passive);
+
+        //Necessery variables for screent position orientating and checking if spline is "on"
+        var mousePos = (Vector2)Event.current.mousePosition;
+        var view = SceneView.currentDrawingSceneView.
+            camera.ScreenToViewportPoint(
+            Event.current.mousePosition);
+
+
+        var mouseIsOutside = view.x < 0 || view.x > 1 || view.y < 0 || view.y > 1;
+        if (mouseIsOutside) return;
+
+        var points = serializedObject.FindProperty("points");
+
+
+        //Checked if shift was clicked 
+        if (Event.current.shift)
+        {
+            //For diferent states of spline diferent actions
+            if (spline.closed)
+            {
+                //ShowClosestPointOnClosedSpline(points);
+            }
+            else
+            {
+                //ShowClosestPointOnOpenSpline(points);
+            }
+        }
+
+        for (int i = 0; i < spline.points.Count; i++)
+        {
+            var prop = points.GetArrayElementAtIndex(i);
+            var point = prop.vector3Value;
+            var wp = spline.transform.TransformPoint(point);
+
+            //This condition will allow user to move the selected point of spline
+            if (hotIndex == i)
+            {
+                //Drawing control widgets
+                var newWp = Handles.PositionHandle(
+                    wp,
+                    Tools.pivotRotation == PivotRotation.Global ? Quaternion.identity : spline.transform.rotation
+                    );
+                var delta = spline.transform.InverseTransformDirection(newWp - wp);
+                if(delta.sqrMagnitude > 0)
+                {
+                    prop.vector3Value = point + delta;
+                    spline.ResetIndex();
+                }
+                //HandleCommands(wp);
+            }
+            //Also we need to create some cind of buttons for points they will behave like normal but the will have shape of circle
+            Handles.color = i == 0 | i == spline.points.Count - 1 ? Color.red : Color.white;
+            var buttonSize = HandleUtility.GetHandleSize(wp) * 0.1f;
+            if (Handles.Button(wp, Quaternion.identity, buttonSize, buttonSize, Handles.SphereHandleCap))
+                hotIndex = i;
+            var v = SceneView.currentDrawingSceneView.camera.transform.InverseTransformPoint(wp);
+            var labelIsOutside = v.z < 0;
+            //drawing and index of control point in case we need to debug somethin
+            if (!labelIsOutside) Handles.Label(wp, i.ToString());
+        }
+    }
     //Basic method for creating custom inspector contains definition for buttons and helbox with info
     public override void OnInspectorGUI()
     {
@@ -62,4 +133,6 @@ public class SplineComponentEditor : Editor
             } while (P + step <= 1);
         }
     }
+
+
 }
