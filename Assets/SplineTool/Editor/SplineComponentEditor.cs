@@ -194,6 +194,33 @@ public class SplineComponentEditor : Editor
         }
         return closestI * step;
     }
+    
+    //Utility Methods
+    void Flatten(List<Vector3> points)
+    {
+        //This method flattens all y cords of control points
+        for(int i = 0; i < points.Count; i++)
+        {
+            points[i] = Vector3.Scale(points[i], new Vector3(1, 0, 1));
+        }
+    }
+
+    void CenterAroundOrigin(List<Vector3> points)
+    {
+
+        //This is used for repositioning control points so that transform of GameObject is at the center of them
+        var center = Vector3.zero;
+        for(int i = 0; i < points.Count; i++)
+        {
+            center += points[i];
+        }
+        center /= points.Count;
+        for(int i = 0; i < points.Count; i++)
+        {
+            points[i] -= center;
+        }
+    }
+
     //Basic method for creating custom inspector contains definition for buttons and helbox with info
     public override void OnInspectorGUI()
     {
