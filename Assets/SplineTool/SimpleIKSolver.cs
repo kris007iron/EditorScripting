@@ -46,32 +46,32 @@ public class SimpleIKSolver : MonoBehaviour
         tipTarget = target;
         effectorTarget = target + normal * effectorLength;
         Solve();
-        var pivotDir = effectorTarget - pivot.position;
-        pivot.rotation = Quaternion.LookRotation(pivotDir);
-        var upperToTarget = (effectorTarget - upper.position);
-        var a = upperLength;
-        var b = lowerLength;
-        var c = upperToTarget.magnitude;
-        //Law of cosinuses
-        var B = Mathf.Acos((c * c + a * a - b * b) / (2 * c * a)) * Mathf.Rad2Deg;
-        var C = Mathf.Acos((a * a + b * b - c * c) / (2 * a * b)) * Mathf.Rad2Deg;
-        //Converting angles to rotations
-        if (!float.IsNaN(C))
-        {
-            {
-                var upperRotation = Quaternion.AngleAxis((-B), Vector3.right);
-                upper.localRotation = upperRotation;
-                var lowerRotation = Quaternion.AngleAxis(180 - C, Vector3.right);
-                lower.localRotation = lowerRotation;
-            }
-            var effectorRotation = Quaternion.LookRotation(tipTarget - effector.position);
-            effector.rotation = effectorRotation;
-        }
     }
     #endregion
     //Acctual solve method
     void Solve()
     {
+        var pivotDir = effectorTarget - pivot.position;
+        pivot.rotation = Quaternion.LookRotation(pivotDir);
 
+
+        var upperToTarget = (effectorTarget - upper.position);
+        var a = upperLength;
+        var b = lowerLength;
+        var c = upperToTarget.magnitude;
+
+        //Law of cosinuses
+        var B = Mathf.Acos((c * c + a * a - b * b) / (2 * c * a)) * Mathf.Rad2Deg;
+        var C = Mathf.Acos((a * a + b * b - c * c) / (2 * a * b)) * Mathf.Rad2Deg;
+        //Converting angles to rotations
+        if (!float.IsNaN(C))        
+        {
+                var upperRotation = Quaternion.AngleAxis((-B), Vector3.right);
+                upper.localRotation = upperRotation;
+                var lowerRotation = Quaternion.AngleAxis(180 - C, Vector3.right);
+                lower.localRotation = lowerRotation;
+        }
+        var effectorRotation = Quaternion.LookRotation(tipTarget - effector.position);
+        effector.rotation = effectorRotation;        
     }
 }
